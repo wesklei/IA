@@ -8,7 +8,6 @@
 #ifndef ANT_HPP
 #define	ANT_HPP
 
-#include "global.hpp"
 
 class Ant {
     

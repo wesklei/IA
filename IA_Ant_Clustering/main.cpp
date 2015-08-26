@@ -7,6 +7,7 @@
 
 #include <cstdlib>
 
+#include "global.hpp"
 #include "Board.hpp"
 
 using namespace std;
@@ -15,14 +16,17 @@ using namespace std;
  * 
  */
 int main(int argc, char** argv) {
-
-    Board *board = new Board(10, 10, 5, 1);
-
-    for (int i = 0; i < 10; i++) {
-        board->printBoard();
-       
+    /* initialize random seed: */
+    srand(time(NULL));
+    
+    Board *board = new Board(40, 520, 200, 5, 0.3, 0.2);
+    board->printBoard();
+    for (int i = 0; i < 100000; i++) {
         board->iterateBoard();
     }
+    board->printBoard();
+    
+    cout << "drops was " << board->drop << " and pick " << board->pick << endl;
     return 0;
 }
 

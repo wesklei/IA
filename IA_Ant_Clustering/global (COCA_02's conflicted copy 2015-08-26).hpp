@@ -8,8 +8,6 @@
 #ifndef GLOBAL_HPP
 #define	GLOBAL_HPP
 
-#include <stdio.h>      /* printf, scanf, puts, NULL */
-#include <stdlib.h>     /* srand, rand */
 #include <iostream>
 #include <vector>
 #include <ctime>

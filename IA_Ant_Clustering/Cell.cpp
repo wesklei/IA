@@ -17,14 +17,37 @@ Cell::Cell(EnumBoard state) {
     this->state = state;
 }
 
-
 Cell::Cell(const Cell& orig) {
 }
 
 Cell::~Cell() {
 }
 
+char Cell::valueOfCell() {
+    return this->state;
+}
+//    FREE = ' ', ANT_DEAD = '*', ANT_CARRING = '%', ANT_NONCARRING = '¬', ANT_DEAD_AND_NONCARRING = '&', BARRIER = '#'
 
-char Cell::valueOfCell(){
+/**
+ * where cell has a dead ant, return without live ants, only dead items
+ * @return 
+ */
+char Cell::valueOfItemCell() {
+
+    switch (this->state) {
+        case ANT_NONCARRING:
+            return FREE;//don't show
+            break;
+        case ANT_CARRYING:
+        case ANT_DEAD_AND_NONCARRYING:
+        case ANT_DEAD:
+            return ANT_DEAD;
+            break;
+        default:
+            return this->state;
+    }
+}
+
+int Cell::getCellState() {
     return this->state;
 }

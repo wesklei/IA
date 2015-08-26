@@ -12,17 +12,18 @@
 #include "Ant.hpp"
 #include "global.hpp"
 
-
 class Cell {
 public:
     EnumBoard state;
-    
+
     Cell();
     Cell(EnumBoard state);
     Cell(const Cell& orig);
     virtual ~Cell();
 
     char valueOfCell();
+    char valueOfItemCell();
+    int getCellState();
 
 
 private:
