@@ -108,10 +108,8 @@ void Board::iterateBoard() {
             x_pos =  randomMove(liveAntsInBoard[i].x_pos);
             y_pos = randomMove(liveAntsInBoard[i].y_pos);            
            
-
             stateInNewCell = this->board[x_pos][y_pos].state;
         } while (stateInNewCell != FREE && stateInNewCell != ANT_DEAD && stateInNewCell != BARRIER);
-
 
         //update old
         EnumBoard oldState = this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].state;
@@ -119,10 +117,19 @@ void Board::iterateBoard() {
 
         std::cout << "[" << liveAntsInBoard[i].x_pos << "," << liveAntsInBoard[i].y_pos << "] => [" << x_pos << "," << y_pos << "]" << this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].valueOfCell() << std::endl;
 
-        //update new
+		//decision make
+		
+        //just walk
+        
+        //get item
+        
+        //release item
+        
+        //update new   
         liveAntsInBoard[i].x_pos = x_pos;
         liveAntsInBoard[i].y_pos = y_pos;
         this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].state = oldState;
+        
     }
 }
 
@@ -163,7 +170,8 @@ int Board::truncateMove(int pos){
  * 
  * Referencias
  */
-
+//http://www.eecs.harvard.edu/~rad/courses/cs266/papers/collective.pdf para os Ks
+//
 
 
 
