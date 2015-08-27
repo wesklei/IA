@@ -35,7 +35,10 @@ public:
     
 private:
     
-    void populateBoard();    
+    void populateBoard();
+    int random(int min, int max);
+    int randomMove(int pos_now);
+    int truncateMove(int pos);
 
 };
 

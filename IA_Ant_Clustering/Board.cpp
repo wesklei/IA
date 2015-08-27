@@ -50,8 +50,8 @@ void Board::populateBoard() {
     while (dead_ants < this->dead_ants) {
 
         do {
-            x_pos = this->minBoardAcess + (rand() % (int) (this->maxBoardAcess - this->minBoardAcess + 1));
-            y_pos = this->minBoardAcess + (rand() % (int) (this->maxBoardAcess - this->minBoardAcess + 1));
+            x_pos = random(minBoardAcess,maxBoardAcess);
+            y_pos = random(minBoardAcess,maxBoardAcess);
         } while (!(this->board[x_pos][y_pos].state == FREE));
 
         this->board[x_pos][y_pos].state = ANT_DEAD;
@@ -62,8 +62,8 @@ void Board::populateBoard() {
     while (live_ants < this->live_ants) {
 
         do {
-            x_pos = this->minBoardAcess + (rand() % (int) (this->maxBoardAcess - this->minBoardAcess + 1));
-            y_pos = this->minBoardAcess + (rand() % (int) (this->maxBoardAcess - this->minBoardAcess + 1));
+            x_pos = random(minBoardAcess,maxBoardAcess);
+            y_pos = random(minBoardAcess,maxBoardAcess);
         } while (!(this->board[x_pos][y_pos].state == FREE));
 
         this->board[x_pos][y_pos].state = ANT_NONCARRING;
@@ -94,7 +94,7 @@ void Board::printBoard() {
 
 void Board::iterateBoard() {
 
-    vector<Ant>::iterator it; // declare an iterator to a vector of strings
+    vector<Ant>::iterator it;
     int x_pos, y_pos;
 
     // now start at from the beginning
@@ -105,9 +105,9 @@ void Board::iterateBoard() {
         //walk ant
         EnumBoard stateInNewCell;
         do {
-            x_pos = this->minBoardAcess + (rand() % (int) (this->maxBoardAcess - this->minBoardAcess + 1));
-            y_pos = this->minBoardAcess + (rand() % (int) (this->maxBoardAcess - this->minBoardAcess + 1));
-
+            x_pos =  randomMove(liveAntsInBoard[i].x_pos);
+            y_pos = randomMove(liveAntsInBoard[i].y_pos);            
+           
 
             stateInNewCell = this->board[x_pos][y_pos].state;
         } while (stateInNewCell != FREE && stateInNewCell != ANT_DEAD && stateInNewCell != BARRIER);
@@ -124,8 +124,48 @@ void Board::iterateBoard() {
         liveAntsInBoard[i].y_pos = y_pos;
         this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].state = oldState;
     }
-
 }
+
+int Board::random(int min, int max) {
+	return min + (rand() % (int) (max - min + 1));
+}
+
+//walk one cell
+int Board::randomMove(int pos_now) {
+	int min = pos_now - 1;
+	int max = pos_now + 1;
+	return truncateMove(min + (rand() % (int) (max - min + 1)));
+}
+
+int Board::truncateMove(int pos){
+	
+	if(pos > this->maxBoardAcess){
+		pos = this->maxBoardAcess;
+	}else if(pos < this->minBoardAcess){
+		pos = this->minBoardAcess;
+	}
+	
+	return pos;
+}
+
+
+/* Introducao
+ * 	Contextualização do problema, justificativa, objetivos, estrutura do relatorio
+ * Problematica
+ * 	Detalhamento do problema, PEAS e caracteristicas
+ * Modelo implementado
+ * 	Estratégias utilizadas, definições, definições de implementação, linguagem
+ * Experimentos e resultados
+ * 	Detalhamento de como os experimentos foram conduzidos (variações do raio, def do numero de itens e tamanho da matriz, quatidade de agentes)
+ * 	Mostrar e analisar os resultados
+ * Conclusao
+ * 	Consideracoes sober o trabalho e sober os resultados obetidos
+ * 
+ * Referencias
+ */
+
+
+
 
 
 
