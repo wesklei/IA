@@ -26,7 +26,6 @@ Cell::~Cell() {
 char Cell::valueOfCell() {
     return this->state;
 }
-//    FREE = ' ', ANT_DEAD = '*', ANT_CARRING = '%', ANT_NONCARRING = '¬', ANT_DEAD_AND_NONCARRING = '&', BARRIER = '#'
 
 /**
  * where cell has a dead ant, return without live ants, only dead items

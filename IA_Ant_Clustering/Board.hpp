@@ -53,6 +53,7 @@ private:
     int visionRadiusCount(Ant &ant);
     bool pickOrNot(Ant &ant);
     bool dropOrNot(Ant &ant);
+    float RandomFloat(float a, float b);
 
 };
 

@@ -29,7 +29,7 @@ Board::Board(int size, int live_ants, int dead_ants, int radius, float prob_pick
 
     this->board = new Cell*[this->SIZE];
     for (int i = 0; i <= this->SIZE; i++) {
-        this->board[i] = new Cell[this->SIZE];
+        this->board[i] = new Cell[this->SIZE]();
     }
 
     //start with barriers
@@ -58,6 +58,10 @@ void Board::populateBoard() {
 
         this->board[x_pos][y_pos].state = ANT_DEAD;
 
+        // this->board[x_pos][y_pos].state = ANT_CARRYING;
+        // this->liveAntsInBoard[live_ants] = Ant(x_pos, y_pos);
+
+        // live_ants++;
         dead_ants++;
     }
 
@@ -71,8 +75,17 @@ void Board::populateBoard() {
         this->board[x_pos][y_pos].state = ANT_NONCARRING;
 
         this->liveAntsInBoard[live_ants] = Ant(x_pos, y_pos);
+        std::cout << "[" << this->liveAntsInBoard[live_ants].x_pos << "," << this->liveAntsInBoard[live_ants].y_pos << "]" << std::endl;
         live_ants++;
     }
+
+    //TODO bugfix
+    // this->board[this->SIZE][this->SIZE].state = BARRIER;
+
+
+    //  for (int i = 0; i != this->ANTS_LIVE; i++) {
+    //      std::cout << "[" << this->liveAntsInBoard[i].x_pos << "," << this->liveAntsInBoard[i].y_pos << "] => " << this->board[this->liveAntsInBoard[i].x_pos][this->liveAntsInBoard[i].y_pos].valueOfCell() << std::endl;
+    //  }
 }
 
 void Board::printBoardWithTabLines() {
@@ -103,7 +116,6 @@ void Board::printBoard() {
 
 void Board::iterateBoard() {
 
-    vector<Ant>::iterator it;
     int x_pos, y_pos;
 
     // now start at from the beginning
@@ -111,76 +123,139 @@ void Board::iterateBoard() {
     // nth element...or reach the end of vector.
     for (int i = 0; i < this->ANTS_LIVE; i++) {
 
+        // cout << "in for " << i << endl;
+        // printBoard();
+
+        EnumBoard stateAnt = this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].state;
+        bool holdItem = stateAnt == ANT_CARRYING ? true : false;
+
+
+        if (stateAnt == ANT_CARRYING) {
+
+            if (dropOrNot(liveAntsInBoard[i])) {
+                this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].state = ANT_DEAD;
+                stateAnt = ANT_NONCARRING; //now is not carrying
+                holdItem = false;
+            } else {
+                this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].state = FREE;
+                holdItem = true;
+            }
+
+        } else {
+
+            bool isPick = pickOrNot(liveAntsInBoard[i]);
+            if (stateAnt == ANT_DEAD_AND_NONCARRYING && isPick) {
+                holdItem = true;
+                this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].state = FREE;
+                stateAnt = ANT_CARRYING; //now is carrying
+            } else if (stateAnt == ANT_DEAD_AND_NONCARRYING && !isPick) {
+                this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].state = ANT_DEAD;
+                holdItem = false;
+            } else {
+                this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].state = FREE;
+                holdItem = false;
+            }
+        }
+
         //walk ant
 
         //find new position to go
         EnumBoard stateInNewCell;
-        do {
-            x_pos = randomMove(liveAntsInBoard[i].x_pos);
-            y_pos = randomMove(liveAntsInBoard[i].y_pos);
 
-            stateInNewCell = this->board[x_pos][y_pos].state;
-        } while (stateInNewCell != FREE && (this->board[x_pos][y_pos].state == ANT_CARRYING && stateInNewCell != ANT_DEAD));
+        if (stateAnt == ANT_CARRYING) {// || stateAnt == ANT_DEAD_AND_NONCARRYING) {
+            do {
+                x_pos = randomMove(liveAntsInBoard[i].x_pos);
+                y_pos = randomMove(liveAntsInBoard[i].y_pos);
 
+                stateInNewCell = this->board[x_pos][y_pos].state;
+            } while (stateInNewCell != FREE);
+        } else {
+            do {
+                x_pos = randomMove(liveAntsInBoard[i].x_pos);
+                y_pos = randomMove(liveAntsInBoard[i].y_pos);
 
-        //update new
-        EnumBoard oldState = this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].state;
-        int old_x_pos = liveAntsInBoard[i].x_pos;
-        int old_y_pos = liveAntsInBoard[i].y_pos;
-        switch (stateInNewCell) {
-            case FREE: //new state is free
-                if (oldState == ANT_CARRYING) {
-                    if (dropOrNot(liveAntsInBoard[i])) {
-                        drop++;
-                        //new
-                        this->board[x_pos][y_pos].state = ANT_DEAD_AND_NONCARRYING; //drop and stay above
-
-                        //old
-                        this->board[old_x_pos][old_y_pos].state = FREE; //free the old state
-
-                    } else {
-                        this->board[x_pos][y_pos].state = ANT_CARRYING; //stay carrying
-
-                        //old
-                        this->board[old_x_pos][old_y_pos].state = FREE; //free the old state
-                    }
-                } else if (oldState == ANT_NONCARRING) {
-                    this->board[x_pos][y_pos].state = ANT_NONCARRING; //stay noncarrying
-
-                    //old
-                    this->board[old_x_pos][old_y_pos].state = FREE; //free the old state
-                }
-
-                break;
-            case ANT_DEAD: //new state has ant dead
-                if (oldState != ANT_CARRYING) {
-                    if (pickOrNot(liveAntsInBoard[i])) {
-                        pick++;
-                        this->board[x_pos][y_pos].state = ANT_CARRYING; //drop and stay above
-
-                        //old
-                        this->board[old_x_pos][old_y_pos].state = FREE; //free the old state
-                    } else {
-                        this->board[x_pos][y_pos].state = ANT_DEAD_AND_NONCARRYING; //stay carrying
-
-                        //old
-                        this->board[old_x_pos][old_y_pos].state = FREE; //free the old state
-                    }
-                }
-                break;
+                stateInNewCell = this->board[x_pos][y_pos].state;
+            } while (stateInNewCell != FREE
+                    && stateInNewCell != ANT_DEAD);
         }
 
-
-        //walk to new
+        //walk to new   
         liveAntsInBoard[i].x_pos = x_pos;
         liveAntsInBoard[i].y_pos = y_pos;
 
+        //update new
+        if (holdItem) {
+            this->board[x_pos][y_pos].state = ANT_CARRYING;
+        } else {
+
+            if (stateInNewCell == ANT_DEAD) {
+                this->board[x_pos][y_pos].state = ANT_DEAD_AND_NONCARRYING;
+            } else {
+                this->board[x_pos][y_pos].state = ANT_NONCARRING;
+            }
+        }
+
+
+
+        /*
+                EnumBoard oldState = this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].state;
+                int old_x_pos = liveAntsInBoard[i].x_pos;
+                int old_y_pos = liveAntsInBoard[i].y_pos;
+                switch (stateInNewCell) {
+                    case FREE: //new state is free
+                        if (oldState == ANT_CARRYING) {
+                            if (dropOrNot(liveAntsInBoard[i])) {
+                                drop++;
+                                //new
+                                this->board[x_pos][y_pos].state = ANT_DEAD_AND_NONCARRYING; //drop and stay above
+
+                                //old
+                                this->board[old_x_pos][old_y_pos].state = FREE; //free the old state
+
+                            } else {
+                                this->board[x_pos][y_pos].state = ANT_CARRYING; //stay carrying
+
+                                //old
+                                this->board[old_x_pos][old_y_pos].state = FREE; //free the old state
+                            }
+                        } else if (oldState == ANT_NONCARRING) {
+                            this->board[x_pos][y_pos].state = ANT_NONCARRING; //stay noncarrying
+
+                            //old
+                            this->board[old_x_pos][old_y_pos].state = FREE; //free the old state
+                        }
+
+                        break;
+                    case ANT_DEAD: //new state has ant dead
+                        if (oldState != ANT_CARRYING) {
+                            if (pickOrNot(liveAntsInBoard[i])) {
+                                pick++;
+                                this->board[x_pos][y_pos].state = ANT_CARRYING; //drop and stay above
+
+                                //old
+                                this->board[old_x_pos][old_y_pos].state = FREE; //free the old state
+                            } else {
+                                this->board[x_pos][y_pos].state = ANT_DEAD_AND_NONCARRYING; //stay carrying
+
+                                //old
+                                this->board[old_x_pos][old_y_pos].state = FREE; //free the old state
+                            }
+                        }
+                        break;
+                }
+
+
+                //walk to new   
+                liveAntsInBoard[i].x_pos = x_pos;
+                liveAntsInBoard[i].y_pos = y_pos;
+         */
         //  std::cout << "[" << liveAntsInBoard[i].x_pos << "," << liveAntsInBoard[i].y_pos << "] => [" << x_pos << "," << y_pos << "]" << this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].valueOfCell() << std::endl;
     }
+    //cout << "ended! " << endl;
 }
 
 int Board::random(int min, int max) {
-    return min + (std::rand() % (int) (max - min + 1));
+    return min + (rand() % (int) (max - min + 1));
 }
 
 //walk one cell
@@ -188,7 +263,7 @@ int Board::random(int min, int max) {
 int Board::randomMove(int pos_now) {
     int min = pos_now - 1;
     int max = pos_now + 1;
-    return truncatePosition(min + (std::rand() % (int) (max - min + 1)));
+    return truncatePosition(min + (rand() % (int) (max - min + 1)));
 }
 
 int Board::truncatePosition(int pos) {
@@ -236,7 +311,12 @@ bool Board::pickOrNot(Ant &ant) {
     float propPickOrNot = (PROP_PICK / (PROP_PICK + deadAntsInVision));
     propPickOrNot *= propPickOrNot; //^2
 
-    return propPickOrNot > PROP_PICK;
+    if (propPickOrNot > PROP_PICK) {
+        pick++;
+        return true;
+    }
+
+    return false;
 }
 
 /* 
@@ -251,7 +331,18 @@ bool Board::dropOrNot(Ant &ant) {
     float propDropOrNot = (deadAntsInVision / (PROP_DROP + deadAntsInVision));
     propDropOrNot *= propDropOrNot; //^2
 
-    return propDropOrNot > PROP_DROP;
+    if (propDropOrNot > PROP_DROP) {
+        drop++;
+        return true;
+    }
+    return false;   
+}
+
+float Board::RandomFloat(float a, float b) {
+    float random = ((float) rand()) / (float) RAND_MAX;
+    float diff = b - a;
+    float r = random * diff;
+    return a + r;
 }
 
 /* Introducao
