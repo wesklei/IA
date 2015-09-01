@@ -15,15 +15,15 @@ Board::~Board() {
 
 Board::Board(int size, int live_ants, int dead_ants, int radius, float prob_pick, float prob_drop) {
 
-    this->SIZE = size + 1;
+    this->SIZE = size;
     this->ANTS_LIVE = live_ants;
     this->ANTS_DEAD = dead_ants;
     this->VISION_RADIUS = radius;
     this->PROP_PICK = prob_pick;
     this->PROP_DROP = prob_drop;
     this->total_ants = this->ANTS_LIVE + this->ANTS_DEAD;
-    this->minBoardAcess = 1;
-    this->maxBoardAcess = this->SIZE - 1;
+    this->minBoardAcess = 0;
+    this->maxBoardAcess = this->SIZE;
 
     this->liveAntsInBoard = new Ant[this->ANTS_LIVE];
 
@@ -108,7 +108,7 @@ void Board::printBoardWithTabLines() {
 void Board::printBoard() {
     for (int i = 0; i <= SIZE; i++) {
         for (int j = 0; j <= SIZE; j++) {
-            std::cout << this->board[i][j].valueOfItemCell();
+            std::cout << this->board[i][j].valueOfCell();
         }
         std::cout << std::endl;
     }
@@ -268,10 +268,26 @@ int Board::randomMove(int pos_now) {
 
 int Board::truncatePosition(int pos) {
 
-    if (pos > this->maxBoardAcess) {
+    // toroide.
+    if (pos < this->minBoardAcess) {
         pos = this->maxBoardAcess;
-    } else if (pos < this->minBoardAcess) {
+    }
+
+    if (pos > this->maxBoardAcess) {
         pos = this->minBoardAcess;
+    }
+
+    return pos;
+}
+
+int Board::truncateVision(int pos) {
+    // toroide.
+    if (pos < this->minBoardAcess) {
+        pos = this->maxBoardAcess + pos;
+    }
+
+    if (pos >= this->maxBoardAcess) {
+        pos = pos % this->maxBoardAcess;
     }
 
     return pos;
@@ -285,20 +301,23 @@ int Board::truncatePosition(int pos) {
 int Board::visionRadiusCount(Ant &ant) {
 
     int count_dead_ants = 0;
-    int x_pos_start = truncatePosition(ant.x_pos - this->VISION_RADIUS);
-    int x_pos_end = truncatePosition(ant.x_pos + this->VISION_RADIUS);
+    int x_pos_start = ant.x_pos - this->VISION_RADIUS;
+    int x_pos_end = ant.x_pos + this->VISION_RADIUS;
 
-    int y_pos_start = truncatePosition(ant.y_pos - this->VISION_RADIUS);
-    int y_pos_end = truncatePosition(ant.y_pos + this->VISION_RADIUS);
+    int y_pos_start = ant.y_pos - this->VISION_RADIUS;
+    int y_pos_end = ant.y_pos + this->VISION_RADIUS;
 
     for (int i = x_pos_start; i <= x_pos_end; i++) {
         for (int j = y_pos_start; j <= y_pos_end; j++) {
-            if (this->board[i][j].state == ANT_DEAD) {
+            
+            if (this->board[truncateVision(i)][truncateVision(j)].state == ANT_DEAD) {
+            //if (this->board[truncatePosition(i)][truncatePosition(j)].state == ANT_DEAD) {
                 count_dead_ants++;
             }
         }
-        return count_dead_ants;
     }
+    
+        return count_dead_ants;
 }
 
 /* 
@@ -309,7 +328,7 @@ bool Board::pickOrNot(Ant &ant) {
     int deadAntsInVision = visionRadiusCount(ant);
 
     float propPickOrNot = (PROP_PICK / (PROP_PICK + deadAntsInVision));
-    propPickOrNot *= propPickOrNot; //^2
+    propPickOrNot = pow(propPickOrNot, 2); //^2
 
     if (propPickOrNot > PROP_PICK) {
         pick++;
@@ -317,25 +336,47 @@ bool Board::pickOrNot(Ant &ant) {
     }
 
     return false;
+    
+      /*  float prob = visionRadiusCount(ant);
+        int probInt = ceil(prob);
+        int random = std::rand()%100;
+
+        if(probInt < random) {
+             pick++;
+            return true;
+        }
+        
+        return false;*/
 }
 
 /* 
  *  Stochastic behaviors to drop or not a dead ant
  */
 bool Board::dropOrNot(Ant &ant) {
-    if (this->board[ant.x_pos][ant.y_pos].state == ANT_NONCARRING
-            || this->board[ant.x_pos][ant.y_pos].state == ANT_DEAD_AND_NONCARRYING) return false; //is not carrying 
+   // if (this->board[ant.x_pos][ant.y_pos].state == ANT_NONCARRING
+    //        || this->board[ant.x_pos][ant.y_pos].state == ANT_DEAD_AND_NONCARRYING) return false; //is not carrying 
 
     int deadAntsInVision = visionRadiusCount(ant);
 
     float propDropOrNot = (deadAntsInVision / (PROP_DROP + deadAntsInVision));
-    propDropOrNot *= propDropOrNot; //^2
+    propDropOrNot = pow(propDropOrNot, 2); //^2
 
     if (propDropOrNot > PROP_DROP) {
         drop++;
         return true;
-    }
-    return false;   
+    }/*
+    return false; 
+    	float prob = visionRadiusCount(ant);
+	int probInt = ceil(prob);
+	int random = std::rand()%100;
+	//cout << "random: " << random << "\tprob: " << probInt << endl;	
+
+	// prob largar corpo
+	if(probInt > random) {
+             drop++;
+		return true;
+	}
+        return false;*/
 }
 
 float Board::RandomFloat(float a, float b) {
@@ -344,24 +385,6 @@ float Board::RandomFloat(float a, float b) {
     float r = random * diff;
     return a + r;
 }
-
-/* Introducao
- * 	Contextualização do problema, justificativa, objetivos, estrutura do relatorio
- * Problematica
- * 	Detalhamento do problema, PEAS e caracteristicas
- * Modelo implementado
- * 	Estratégias utilizadas, definições, definições de implementação, linguagem
- * Experimentos e resultados
- * 	Detalhamento de como os experimentos foram conduzidos (variações do raio, def do numero de itens e tamanho da matriz, quatidade de agentes)
- * 	Mostrar e analisar os resultados
- * Conclusao
- * 	Consideracoes sober o trabalho e sober os resultados obetidos
- * 
- * Referencias
- */
-//http://www.eecs.harvard.edu/~rad/courses/cs266/papers/collective.pdf para os Ks
-//
-
 
 
 

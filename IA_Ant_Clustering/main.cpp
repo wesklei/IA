@@ -17,10 +17,15 @@ using namespace std;
 int main(int argc, char** argv) {
 
     srand(time(NULL));
-    Board *board = new Board(40, 100, 400, 1, 0.3, 0.2);
+    Board *board = new Board(20,50, 20, 3, 0.3, 0.2);
     board->printBoard();
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 100000000; i++) {
         board->iterateBoard();
+        
+        if (i % 100000 == 0) {
+          //  gnuplot_write("imgs/iterate_" + to_string(i), board, false);
+            board->printBoard();
+      }
     }
     board->printBoard();
     cout << "picks " << board->pick << " drops " << board->drop << endl;

@@ -49,7 +49,8 @@ private:
     void populateBoard();
     int random(int min, int max);
     int randomMove(int pos_now);
-    int truncatePosition(int pos);
+    int truncatePosition(int pos);    
+    int truncateVision(int pos);
     int visionRadiusCount(Ant &ant);
     bool pickOrNot(Ant &ant);
     bool dropOrNot(Ant &ant);
