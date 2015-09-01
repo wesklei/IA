@@ -7,7 +7,7 @@ Experimental run with:
 
    Dead Ants: 350
 
-   Iteration: 500000
+   Iterations: 500000
 
    Vision: 1
 
