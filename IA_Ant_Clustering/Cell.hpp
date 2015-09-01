@@ -24,6 +24,7 @@ public:
     char valueOfCell();
     char valueOfItemCell();
     int getCellState();
+    bool hasDeadAntInCell();
 
 
 private:

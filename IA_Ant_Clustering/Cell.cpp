@@ -47,6 +47,25 @@ char Cell::valueOfItemCell() {
     }
 }
 
+
+/**
+ * where cell has a dead ant, return without live ants, only dead items
+ * @return 
+ */
+bool Cell::hasDeadAntInCell() {
+
+    bool retorno = false;
+    switch (this->state) {
+        case ANT_CARRYING:
+        case ANT_DEAD_AND_NONCARRYING:
+        case ANT_DEAD:
+            retorno = true;
+            break;            
+    }
+    
+    return retorno;
+}
+
 int Cell::getCellState() {
     return this->state;
 }

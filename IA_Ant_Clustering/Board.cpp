@@ -57,11 +57,6 @@ void Board::populateBoard() {
         } while (!(this->board[x_pos][y_pos].state == FREE));
 
         this->board[x_pos][y_pos].state = ANT_DEAD;
-
-        // this->board[x_pos][y_pos].state = ANT_CARRYING;
-        // this->liveAntsInBoard[live_ants] = Ant(x_pos, y_pos);
-
-        // live_ants++;
         dead_ants++;
     }
 
@@ -78,14 +73,6 @@ void Board::populateBoard() {
         std::cout << "[" << this->liveAntsInBoard[live_ants].x_pos << "," << this->liveAntsInBoard[live_ants].y_pos << "]" << std::endl;
         live_ants++;
     }
-
-    //TODO bugfix
-    // this->board[this->SIZE][this->SIZE].state = BARRIER;
-
-
-    //  for (int i = 0; i != this->ANTS_LIVE; i++) {
-    //      std::cout << "[" << this->liveAntsInBoard[i].x_pos << "," << this->liveAntsInBoard[i].y_pos << "] => " << this->board[this->liveAntsInBoard[i].x_pos][this->liveAntsInBoard[i].y_pos].valueOfCell() << std::endl;
-    //  }
 }
 
 void Board::printBoardWithTabLines() {
@@ -122,9 +109,6 @@ void Board::iterateBoard() {
     // and keep iterating over the element till you find
     // nth element...or reach the end of vector.
     for (int i = 0; i < this->ANTS_LIVE; i++) {
-
-        // cout << "in for " << i << endl;
-        // printBoard();
 
         EnumBoard stateAnt = this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].state;
         bool holdItem = stateAnt == ANT_CARRYING ? true : false;
@@ -194,64 +178,7 @@ void Board::iterateBoard() {
                 this->board[x_pos][y_pos].state = ANT_NONCARRING;
             }
         }
-
-
-
-        /*
-                EnumBoard oldState = this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].state;
-                int old_x_pos = liveAntsInBoard[i].x_pos;
-                int old_y_pos = liveAntsInBoard[i].y_pos;
-                switch (stateInNewCell) {
-                    case FREE: //new state is free
-                        if (oldState == ANT_CARRYING) {
-                            if (dropOrNot(liveAntsInBoard[i])) {
-                                drop++;
-                                //new
-                                this->board[x_pos][y_pos].state = ANT_DEAD_AND_NONCARRYING; //drop and stay above
-
-                                //old
-                                this->board[old_x_pos][old_y_pos].state = FREE; //free the old state
-
-                            } else {
-                                this->board[x_pos][y_pos].state = ANT_CARRYING; //stay carrying
-
-                                //old
-                                this->board[old_x_pos][old_y_pos].state = FREE; //free the old state
-                            }
-                        } else if (oldState == ANT_NONCARRING) {
-                            this->board[x_pos][y_pos].state = ANT_NONCARRING; //stay noncarrying
-
-                            //old
-                            this->board[old_x_pos][old_y_pos].state = FREE; //free the old state
-                        }
-
-                        break;
-                    case ANT_DEAD: //new state has ant dead
-                        if (oldState != ANT_CARRYING) {
-                            if (pickOrNot(liveAntsInBoard[i])) {
-                                pick++;
-                                this->board[x_pos][y_pos].state = ANT_CARRYING; //drop and stay above
-
-                                //old
-                                this->board[old_x_pos][old_y_pos].state = FREE; //free the old state
-                            } else {
-                                this->board[x_pos][y_pos].state = ANT_DEAD_AND_NONCARRYING; //stay carrying
-
-                                //old
-                                this->board[old_x_pos][old_y_pos].state = FREE; //free the old state
-                            }
-                        }
-                        break;
-                }
-
-
-                //walk to new   
-                liveAntsInBoard[i].x_pos = x_pos;
-                liveAntsInBoard[i].y_pos = y_pos;
-         */
-        //  std::cout << "[" << liveAntsInBoard[i].x_pos << "," << liveAntsInBoard[i].y_pos << "] => [" << x_pos << "," << y_pos << "]" << this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].valueOfCell() << std::endl;
     }
-    //cout << "ended! " << endl;
 }
 
 int Board::random(int min, int max) {
@@ -311,7 +238,6 @@ int Board::visionRadiusCount(Ant &ant) {
         for (int j = y_pos_start; j <= y_pos_end; j++) {
             
             if (this->board[truncateVision(i)][truncateVision(j)].state == ANT_DEAD) {
-            //if (this->board[truncatePosition(i)][truncatePosition(j)].state == ANT_DEAD) {
                 count_dead_ants++;
             }
         }
@@ -335,27 +261,13 @@ bool Board::pickOrNot(Ant &ant) {
         return true;
     }
 
-    return false;
-    
-      /*  float prob = visionRadiusCount(ant);
-        int probInt = ceil(prob);
-        int random = std::rand()%100;
-
-        if(probInt < random) {
-             pick++;
-            return true;
-        }
-        
-        return false;*/
+    return false;    
 }
 
 /* 
  *  Stochastic behaviors to drop or not a dead ant
  */
 bool Board::dropOrNot(Ant &ant) {
-   // if (this->board[ant.x_pos][ant.y_pos].state == ANT_NONCARRING
-    //        || this->board[ant.x_pos][ant.y_pos].state == ANT_DEAD_AND_NONCARRYING) return false; //is not carrying 
-
     int deadAntsInVision = visionRadiusCount(ant);
 
     float propDropOrNot = (deadAntsInVision / (PROP_DROP + deadAntsInVision));
@@ -364,19 +276,7 @@ bool Board::dropOrNot(Ant &ant) {
     if (propDropOrNot > PROP_DROP) {
         drop++;
         return true;
-    }/*
-    return false; 
-    	float prob = visionRadiusCount(ant);
-	int probInt = ceil(prob);
-	int random = std::rand()%100;
-	//cout << "random: " << random << "\tprob: " << probInt << endl;	
-
-	// prob largar corpo
-	if(probInt > random) {
-             drop++;
-		return true;
-	}
-        return false;*/
+    }
 }
 
 float Board::RandomFloat(float a, float b) {
