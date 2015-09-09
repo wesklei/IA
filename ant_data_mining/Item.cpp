@@ -10,15 +10,18 @@
 Item::Item() {
 }
 
-Item::Item(float x_cord, float y_cord, int color) {
-  this->x_cord = x_cord;
-  this->y_cord = y_cord;
-  this->color = color;
+Item::Item(float x_cord, float y_cord, char color) {
+    this->x_cord = x_cord;
+    this->y_cord = y_cord;
+    this->color = color;
 }
 
 Item::Item(const Item& orig) {
 }
 
 Item::~Item() {
+    x_cord = -1;
+    y_cord = -1;
+    color = '0';
 }
 

@@ -14,11 +14,11 @@ class Item {
 public:
     float x_cord;
     float y_cord;
-    int color;
+    char color;
     
     
     Item();
-    Item(float x_cord, float y_cord, int color);
+    Item(float x_cord, float y_cord, char color);
     Item(const Item& orig);
     virtual ~Item();
 private:

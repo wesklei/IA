@@ -54,10 +54,12 @@ private:
     int randomMove(int pos_now);
     int truncatePosition(int pos);    
     int truncateVision(int pos);
-    int visionRadiusCount(Ant &ant);
+    int visionRadiusCountItem(Ant &ant);
     bool pickOrNot(Ant &ant);
     bool dropOrNot(Ant &ant);
     float RandomFloat(float a, float b);
+    float euclidianDistance(double x1, double y1, double x2, double y2);
+
 
 };
 

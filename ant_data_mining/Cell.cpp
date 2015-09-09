@@ -28,7 +28,6 @@ Cell::~Cell() {
 char Cell::valueOfCell() {
     return this->state;
 }
-
 /**
  * where cell has a dead ant, return without live ants, only dead items
  * @return 
@@ -37,12 +36,13 @@ char Cell::valueOfItemCell() {
 
     switch (this->state) {
         case ANT_NONCARRING:
-            return FREE;//don't show
-            break;
+           // return FREE;//don't show
+            //break;
         case ANT_CARRYING:
         case ANT_DEAD_AND_NONCARRYING:
         case ANT_DEAD:
-            return ANT_DEAD;
+            //return ANT_DEAD;
+            return (char)this->item.color;
             break;
         default:
             return this->state;

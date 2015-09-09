@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=IA_Ant_Clustering
+PROJECTNAME=ant_data_mining
 
 # Active Configuration
 DEFAULTCONF=Debug

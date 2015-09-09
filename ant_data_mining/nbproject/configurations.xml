@@ -7,11 +7,13 @@
       <itemPath>Ant.hpp</itemPath>
       <itemPath>Board.hpp</itemPath>
       <itemPath>Cell.hpp</itemPath>
+      <itemPath>Item.hpp</itemPath>
       <itemPath>global.hpp</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
                    projectFiles="true">
+      <itemPath>Square1_DataSet_400itens.txt</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -19,6 +21,7 @@
       <itemPath>Ant.cpp</itemPath>
       <itemPath>Board.cpp</itemPath>
       <itemPath>Cell.cpp</itemPath>
+      <itemPath>Item.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -58,6 +61,12 @@
       </item>
       <item path="Cell.hpp" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="Item.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Item.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Square1_DataSet_400itens.txt" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="global.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
@@ -94,6 +103,12 @@
       <item path="Cell.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Cell.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Item.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Item.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Square1_DataSet_400itens.txt" ex="false" tool="3" flavor2="0">
       </item>
       <item path="global.hpp" ex="false" tool="3" flavor2="0">
       </item>

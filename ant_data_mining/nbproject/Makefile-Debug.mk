@@ -38,6 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/Ant.o \
 	${OBJECTDIR}/Board.o \
 	${OBJECTDIR}/Cell.o \
+	${OBJECTDIR}/Item.o \
 	${OBJECTDIR}/main.o
 
 
@@ -59,11 +60,11 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ia_ant_clustering
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ant_data_mining
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ia_ant_clustering: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ant_data_mining: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ia_ant_clustering ${OBJECTFILES} ${LDLIBSOPTIONS}
+	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ant_data_mining ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/Ant.o: Ant.cpp 
 	${MKDIR} -p ${OBJECTDIR}
@@ -80,6 +81,11 @@ ${OBJECTDIR}/Cell.o: Cell.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Cell.o Cell.cpp
 
+${OBJECTDIR}/Item.o: Item.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Item.o Item.cpp
+
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
@@ -91,7 +97,7 @@ ${OBJECTDIR}/main.o: main.cpp
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ia_ant_clustering
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ant_data_mining
 
 # Subprojects
 .clean-subprojects:

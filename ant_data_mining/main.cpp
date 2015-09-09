@@ -17,7 +17,7 @@
 #include <time.h>
 
 using namespace std;
-#define BOARD_SIZE 32
+#define BOARD_SIZE 52
 #define GNUPLOT_NAME "gnuplot"
 #define GIFF_NAME "convert"
 #define SHOW_IN_WINDOW false
@@ -77,24 +77,24 @@ void generate_giff() {
 int main(int argc, char** argv) {
 
     srand(time(NULL));
-    Board *board = new Board(BOARD_SIZE, 250, 350, 1, 0.3, 0.2);
+    Board *board = new Board(BOARD_SIZE, 50, 400, 1, 0.3, 0.2);
     board->printBoard();
     //gnuplot_write("start", board, SHOW_IN_WINDOW);
 
     int times, timed;
 
-    gnuplot_write("imgs/iterate_0", board, false);
+   // gnuplot_write("imgs/iterate_0", board, false);
     times = clock();
-    for (int i = 0; i < 500000; i++) {
+    for (int i = 0; i < 1000; i++) {
         board->iterateBoard();
-        //if (i % 1000 == 0) {
+        //if (i % 100 == 0) {
           //  gnuplot_write("imgs/iterate_" + to_string(i), board, false);
-           // board->printBoard();
-        //}
+         //   board->printBoard();
+       // }
     }
     timed = clock();
     //gnuplot_write("imgs/iterate_500000", board, false);
-    generate_giff();
+   // generate_giff();
 
     board->printBoard();
     cout << "picks " << board->pick << " drops " << board->drop << endl;
