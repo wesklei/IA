@@ -87,9 +87,9 @@ int main(int argc, char** argv) {
     times = clock();
     for (int i = 0; i < 1000; i++) {
         board->iterateBoard();
-        //if (i % 100 == 0) {
+        //if (i % 1000 == 0) {
           //  gnuplot_write("imgs/iterate_" + to_string(i), board, false);
-         //   board->printBoard();
+        //    board->printBoard();
        // }
     }
     timed = clock();

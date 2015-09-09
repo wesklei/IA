@@ -149,9 +149,6 @@ void Board::iterateBoard() {
 
         EnumBoard stateAnt = this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].state;
         bool isHoldItem = stateAnt == ANT_CARRYING ? true : false;
-        if(i>40)
-        Item origin = this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].item;
-
 
         Item holdItem;
         if (stateAnt == ANT_CARRYING) {
@@ -277,7 +274,7 @@ int Board::truncateVision(int pos) {
  * @param ant
  * @return 
  */
-int Board::visionRadiusCountItem(Ant &ant) {
+float Board::visionRadiusCountItem(Ant &ant) { 
 
     int count_dead_ants = 0;
     int x_pos_start = ant.x_pos - this->VISION_RADIUS;
@@ -287,41 +284,61 @@ int Board::visionRadiusCountItem(Ant &ant) {
     int y_pos_end = ant.y_pos + this->VISION_RADIUS;
 
     float sum_func = 0;
-    float dist;
+    float dist, norm;
+    
+    int i_truncate,j_truncate;
 
     // Item origin = this->board[ant.x_pos][ant.y_pos].item;
     for (int i = x_pos_start; i <= x_pos_end; i++) {
         for (int j = y_pos_start; j <= y_pos_end; j++) {
 
-            if (this->board[truncateVision(i)][truncateVision(j)].state == ANT_DEAD && i != ant.x_pos && j != ant.y_pos) {
+          i_truncate = truncateVision(i);
+          j_truncate = truncateVision(j);
+            if (this->board[i_truncate][j_truncate].state == ANT_DEAD && i_truncate != ant.x_pos && j_truncate!= ant.y_pos) {
                 count_dead_ants++;
 
+              //sum_func = sum_func + 1 - (euclidianDistance(this->board[ant.x_pos][ant.y_pos].item.x_cord, this->board[ant.x_pos][ant.y_pos].item.y_cord, this->board[i_truncate][j_truncate].item.x_cord, this->board[i_truncate][j_truncate].item.y_cord)/0.1);
+         
                 //Item dest = this->board[i][j].item;
-                dist = euclidianDistance(this->board[ant.x_pos][ant.y_pos].item.x_cord, this->board[ant.x_pos][ant.y_pos].item.y_cord, this->board[i][j].item.x_cord, this->board[i][j].item.y_cord);
+                dist = euclidianDistance(this->board[ant.x_pos][ant.y_pos].item.x_cord, this->board[ant.x_pos][ant.y_pos].item.y_cord, this->board[i_truncate][j_truncate].item.x_cord, this->board[i_truncate][j_truncate].item.y_cord);
 
-                sum_func += (1 - (dist / 0.02));
+               // cout <<  dist  << "=" << "euclidianDistance( " << this->board[ant.x_pos][ant.y_pos].item.x_cord << " , " << this->board[ant.x_pos][ant.y_pos].item.y_cord << " , " <<  this->board[i_truncate][j_truncate].item.x_cord << " , " <<  this->board[i_truncate][j_truncate].item.y_cord << ")" << endl;
+
+                norm = (1.0 - (dist / 1));
+               // cout << "norm " << norm << endl; 
+               /// if(norm < 0){
+               //   sum_func = 0;
+               //   break;
+               // }
+                
+                sum_func += norm; 
+                
+               // cout << "sum " << sum_func << endl;
             }
         }
     }
-
-    if (count_dead_ants != 0) {
+   //cout << "sum_funccc before" << sum_func << endl;
+    
+    sum_func = sum_func/((float)8*8);
+   /* if (count_dead_ants != 0) {
         sum_func = sum_func / (count_dead_ants * count_dead_ants);
     } else {
         sum_func = 0; //TODO?
-    }
-
-    if (sum_func > 0) {
+    }*/
+//cout << "sum_funccc after" << sum_func << endl;
+return sum_func;
+    /*if (sum_func > 0) {
         return sum_func;
     } else {
         return 0;
-    }
+    }*/
 }
 
 /*
  * calculating distance by euclidean formula
  */
 float Board::euclidianDistance(double x1, double y1, double x2, double y2) {
-    return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
+    return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2))/360.624458405;
 }
 
 /* 
@@ -335,6 +352,7 @@ bool Board::pickOrNot(Ant &ant) {
 
     if (propPickOrNot > PROP_PICK) {
         EnumBoard state = this->board[ant.x_pos][ant.y_pos].state;
+      // cout << "propPickOrNot is " << propPickOrNot  << " deadAntsInVision " << deadAntsInVision << endl;
         if (state == ANT_DEAD_AND_NONCARRYING) {
             pick++;
         }
@@ -357,6 +375,8 @@ bool Board::dropOrNot(Ant &ant) {
     if (propDropOrNot > PROP_DROP) {
         drop++;
         return true;
+    }else{
+    //  cout << "prop drop is " << propDropOrNot << " deadAntsInVision " << deadAntsInVision << endl;
     }
 
     return false;

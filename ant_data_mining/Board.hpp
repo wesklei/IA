@@ -54,7 +54,7 @@ private:
     int randomMove(int pos_now);
     int truncatePosition(int pos);    
     int truncateVision(int pos);
-    int visionRadiusCountItem(Ant &ant);
+    float visionRadiusCountItem(Ant &ant);
     bool pickOrNot(Ant &ant);
     bool dropOrNot(Ant &ant);
     float RandomFloat(float a, float b);
