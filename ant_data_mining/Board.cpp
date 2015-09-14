@@ -25,7 +25,7 @@ Board::Board(int size, int live_ants, int dead_ants, int radius, float prob_pick
     this->PROP_DROP = prob_drop;
     this->total_ants = this->ANTS_LIVE + this->ANTS_DEAD;
     this->minBoardAcess = 0;
-    this->maxBoardAcess = this->SIZE;
+    this->maxBoardAcess = this->SIZE - 1;
 
     this->liveAntsInBoard = new Ant[this->ANTS_LIVE];
 
@@ -65,19 +65,32 @@ void Board::populateBoard() {
     int x_pos, y_pos;
     float x_data, y_data;
     char color_data;
-
+    int limit = 0;
     Item* items = new Item[this->ANTS_DEAD];
     std::ifstream infile("Square1_DataSet_400itens.txt");
 
     if (infile) // Verify that the file was open successfully
     {
-        cout << "Reading file" << endl;
-        while (infile >> x_data >> y_data >> color_data) {
 
-            cout << x_data << " " << y_data << " " << color_data << endl;
+        while (infile >> x_data >> y_data >> color_data && limit < this->ANTS_DEAD) {
+            limit++;
             items[dead_ants] = Item(x_data, y_data, color_data);
             dead_ants++;
         }
+
+        double dist;
+        double max_dist = -1;
+        this->NORM_DIST = 1;
+        for (int i = 0; i < ANTS_DEAD; i++) {
+            for (int j = i + 1; j < ANTS_DEAD; j++) {
+                dist = euclidianDistance(items[i].x_cord, items[i].y_cord, items[j].x_cord, items[j].y_cord);
+
+                if (dist > max_dist) {
+                    max_dist = dist;
+                }
+            }
+        }
+        this->NORM_DIST = max_dist;
 
         dead_ants = 0;
         while (dead_ants < this->ANTS_DEAD) {
@@ -103,7 +116,6 @@ void Board::populateBoard() {
             this->board[x_pos][y_pos].state = ANT_NONCARRING;
 
             this->liveAntsInBoard[live_ants] = Ant(x_pos, y_pos);
-            //  std::cout << "[" << this->liveAntsInBoard[live_ants].x_pos << "," << this->liveAntsInBoard[live_ants].y_pos << "]" << std::endl;
             live_ants++;
         }
     } else {
@@ -132,7 +144,7 @@ void Board::printBoardWithTabLines() {
 void Board::printBoard() {
     for (int i = 0; i <= SIZE; i++) {
         for (int j = 0; j <= SIZE; j++) {
-            std::cout << this->board[i][j].valueOfItemCell();
+            std::cout << this->board[i][j].valueOfCell();
         }
         std::cout << std::endl;
     }
@@ -161,30 +173,26 @@ void Board::iterateBoard() {
                 this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].state = FREE;
 
                 holdItem = this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].item;
-                //this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].item.~Item(); // = NULL;
                 isHoldItem = true;
             }
 
+
         } else {
 
-            if (stateAnt == ANT_DEAD_AND_NONCARRYING) {
-                bool isPick = pickOrNot(liveAntsInBoard[i]);
-                
-                if (isPick) {
+            bool isPick = pickOrNot(liveAntsInBoard[i]);
+            if (stateAnt == ANT_DEAD_AND_NONCARRYING && isPick) {
 
-                    isHoldItem = true;
-                    holdItem = this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].item;
+                isHoldItem = true;
+                holdItem = this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].item;
 
-                    this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].state = FREE;
-                    stateAnt = ANT_CARRYING; //now is carrying
-
-                } else if (!isPick) {
-                    this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].state = ANT_DEAD;
-                    isHoldItem = false;
-                } else {
-                    this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].state = FREE;
-                    isHoldItem = false;
-                }
+                this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].state = FREE;
+                stateAnt = ANT_CARRYING; //now is carrying
+            } else if (stateAnt == ANT_DEAD_AND_NONCARRYING && !isPick) {
+                this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].state = ANT_DEAD;
+                isHoldItem = false;
+            } else {
+                this->board[liveAntsInBoard[i].x_pos][liveAntsInBoard[i].y_pos].state = FREE;
+                isHoldItem = false;
             }
         }
 
@@ -274,7 +282,7 @@ int Board::truncateVision(int pos) {
  * @param ant
  * @return 
  */
-float Board::visionRadiusCountItem(Ant &ant) { 
+float Board::visionRadiusCountItem(Ant & ant) {
 
     int count_dead_ants = 0;
     int x_pos_start = ant.x_pos - this->VISION_RADIUS;
@@ -285,66 +293,46 @@ float Board::visionRadiusCountItem(Ant &ant) {
 
     float sum_func = 0;
     float dist, norm;
-    
-    int i_truncate,j_truncate;
 
-    // Item origin = this->board[ant.x_pos][ant.y_pos].item;
+    int i_truncate, j_truncate;
     for (int i = x_pos_start; i <= x_pos_end; i++) {
         for (int j = y_pos_start; j <= y_pos_end; j++) {
 
-          i_truncate = truncateVision(i);
-          j_truncate = truncateVision(j);
-            if (this->board[i_truncate][j_truncate].state == ANT_DEAD && i_truncate != ant.x_pos && j_truncate!= ant.y_pos) {
+            i_truncate = truncateVision(i);
+            j_truncate = truncateVision(j);
+            if (this->board[i_truncate][j_truncate].state == ANT_DEAD && i_truncate != ant.x_pos && j_truncate != ant.y_pos) {
                 count_dead_ants++;
-
-              //sum_func = sum_func + 1 - (euclidianDistance(this->board[ant.x_pos][ant.y_pos].item.x_cord, this->board[ant.x_pos][ant.y_pos].item.y_cord, this->board[i_truncate][j_truncate].item.x_cord, this->board[i_truncate][j_truncate].item.y_cord)/0.1);
-         
-                //Item dest = this->board[i][j].item;
                 dist = euclidianDistance(this->board[ant.x_pos][ant.y_pos].item.x_cord, this->board[ant.x_pos][ant.y_pos].item.y_cord, this->board[i_truncate][j_truncate].item.x_cord, this->board[i_truncate][j_truncate].item.y_cord);
 
-               // cout <<  dist  << "=" << "euclidianDistance( " << this->board[ant.x_pos][ant.y_pos].item.x_cord << " , " << this->board[ant.x_pos][ant.y_pos].item.y_cord << " , " <<  this->board[i_truncate][j_truncate].item.x_cord << " , " <<  this->board[i_truncate][j_truncate].item.y_cord << ")" << endl;
-
-                norm = (1.0 - (dist / 1));
-               // cout << "norm " << norm << endl; 
-               /// if(norm < 0){
-               //   sum_func = 0;
-               //   break;
-               // }
-                
-                sum_func += norm; 
-                
-               // cout << "sum " << sum_func << endl;
+                norm = (1.0 - (dist / 0.3));
+                sum_func += norm;
             }
         }
     }
-   //cout << "sum_funccc before" << sum_func << endl;
-    
-    sum_func = sum_func/((float)8*8);
-   /* if (count_dead_ants != 0) {
-        sum_func = sum_func / (count_dead_ants * count_dead_ants);
-    } else {
-        sum_func = 0; //TODO?
-    }*/
-//cout << "sum_funccc after" << sum_func << endl;
-return sum_func;
-    /*if (sum_func > 0) {
+
+    if (count_dead_ants == 0) {
+        return 0;
+    }
+    sum_func = sum_func / count_dead_ants; //((float) 8 * 8);
+
+    if (sum_func > 0) {
         return sum_func;
     } else {
         return 0;
-    }*/
+    }
 }
 
 /*
  * calculating distance by euclidean formula
  */
 float Board::euclidianDistance(double x1, double y1, double x2, double y2) {
-    return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2))/360.624458405;
+    return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2)) / this->NORM_DIST; //360.624458405;
 }
 
 /* 
  *  Stochastic behaviors to pick or not a dead ant
  */
-bool Board::pickOrNot(Ant &ant) {
+bool Board::pickOrNot(Ant & ant) {
 
     float deadAntsInVision = visionRadiusCountItem(ant);
     float propPickOrNot = (PROP_PICK / (PROP_PICK + deadAntsInVision));
@@ -352,7 +340,6 @@ bool Board::pickOrNot(Ant &ant) {
 
     if (propPickOrNot > PROP_PICK) {
         EnumBoard state = this->board[ant.x_pos][ant.y_pos].state;
-      // cout << "propPickOrNot is " << propPickOrNot  << " deadAntsInVision " << deadAntsInVision << endl;
         if (state == ANT_DEAD_AND_NONCARRYING) {
             pick++;
         }
@@ -366,17 +353,20 @@ bool Board::pickOrNot(Ant &ant) {
 /* 
  *  Stochastic behaviors to drop or not a dead ant
  */
-bool Board::dropOrNot(Ant &ant) {
+bool Board::dropOrNot(Ant & ant) {
     float deadAntsInVision = visionRadiusCountItem(ant);
 
     float propDropOrNot = (deadAntsInVision / (PROP_DROP + deadAntsInVision));
-    propDropOrNot = pow(propDropOrNot, 2); //^2
+    propDropOrNot = pow(propDropOrNot, 2); //*100; //^2
 
     if (propDropOrNot > PROP_DROP) {
-        drop++;
+
+        EnumBoard state = this->board[ant.x_pos][ant.y_pos].state;
+        if (state == ANT_CARRYING) {
+            drop++;
+        }
+
         return true;
-    }else{
-    //  cout << "prop drop is " << propDropOrNot << " deadAntsInVision " << deadAntsInVision << endl;
     }
 
     return false;

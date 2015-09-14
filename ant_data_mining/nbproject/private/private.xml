@@ -15,6 +15,11 @@
             <file>file:/home/wes/Dropbox/Faculdade/2015-2/ia/IA_Ant_Clustering/Board.cpp</file>
             <file>file:/home/wes/Dropbox/Faculdade/2015-2/ia/IA_Ant_Clustering/Cell.hpp</file>
         </group>
-        <group name="Projetos"/>
+        <group name="Projetos">
+            <file>file:/home/wes/Dropbox/Faculdade/2015-2/ia/ant_data_mining/Item.cpp</file>
+            <file>file:/home/wes/Dropbox/Faculdade/2015-2/ia/ant_data_mining/Cell.cpp</file>
+            <file>file:/home/wes/Dropbox/Faculdade/2015-2/ia/ant_data_mining/main.cpp</file>
+            <file>file:/home/wes/Dropbox/Faculdade/2015-2/ia/ant_data_mining/Board.cpp</file>
+        </group>
     </open-files>
 </project-private>

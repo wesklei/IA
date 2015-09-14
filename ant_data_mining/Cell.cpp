@@ -36,13 +36,14 @@ char Cell::valueOfItemCell() {
 
     switch (this->state) {
         case ANT_NONCARRING:
-           // return FREE;//don't show
+            return FREE;//don't show
+           // return ANT_NONCARRING;//don't show
             //break;
         case ANT_CARRYING:
         case ANT_DEAD_AND_NONCARRYING:
         case ANT_DEAD:
-            //return ANT_DEAD;
-            return (char)this->item.color;
+            return ANT_DEAD;
+            //return (char)this->item.color;
             break;
         default:
             return this->state;

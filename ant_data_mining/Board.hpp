@@ -29,7 +29,7 @@ public:
     int VISION_RADIUS;
     float PROP_PICK;
     float PROP_DROP;
-
+    float NORM_DIST;
     int total_ants;
     int minBoardAcess;
     int maxBoardAcess;
