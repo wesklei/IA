@@ -5,14 +5,11 @@
  * Created on August 23, 2015, 9:31 PM
  */
 
-#include <cstdlib>
-
 #include "Board.hpp"
 #include <cstdlib>
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include "Board.hpp"
 #include <string.h>
 #include <time.h>
 
