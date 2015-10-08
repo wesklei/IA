@@ -41,11 +41,11 @@ void gnuplot_write(string name, Board *board, bool showInWindow) {
         fprintf(pipe, "set xrange [-1:42]\n"); // set the terminal
         fprintf(pipe, "set yrange [-1:42]\n"); // set the terminal
 
-        fprintf(pipe, "set style line 1 lc rgb 'green' pt 5 \n"); // plot type square
-        fprintf(pipe, "set style line 2 lc rgb 'brown' pt 5\n"); // plot type circle
-        fprintf(pipe, "set style line 3 lc rgb 'blue' pt 5\n"); // plot type triangle
-        fprintf(pipe, "set style line 4 lc rgb 'orange' pt 5\n"); // plot type *
-        fprintf(pipe, "set style line 5 lc rgb 'red' pt 5\n"); // plot type *
+        fprintf(pipe, "set style line 1 lc rgb 'green' pt 5 ps 2 \n"); // plot type square
+        fprintf(pipe, "set style line 2 lc rgb 'brown' pt 5 ps 2 \n"); // plot type circle
+        fprintf(pipe, "set style line 3 lc rgb 'blue' pt 5 ps 2 \n"); // plot type triangle
+        fprintf(pipe, "set style line 4 lc rgb 'orange' pt 5 ps 2 \n"); // plot type *
+        fprintf(pipe, "set style line 5 lc rgb 'red' pt 5 ps 2 \n"); // plot type *
 
         ofstream color1("color_1_ordered.dataset");
         ofstream color2("color_2_ordered.dataset");
